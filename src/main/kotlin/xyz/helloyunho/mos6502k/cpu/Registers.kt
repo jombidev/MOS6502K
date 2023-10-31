@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package xyz.helloyunho.mos6502k.cpu
 
 enum class AllRegisters {

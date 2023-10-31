@@ -1,49 +1,8 @@
-package xyz.helloyunho.mos6502k.cpu // AH finally
+@file:Suppress("unused")
 
-enum class Flags(val pos: UByte) { // how oh nvm got it
-    /*
-        // Flags Bit Order: NV_BDIZC
-    // swiftlint:disable identifier_name
-    /**
-     Negative flag.
+package xyz.helloyunho.mos6502k.cpu
 
-     Usually same as bit 7(Negative bit),
-     but when compare, it indicates whether
-     the input value is smaller than the register value.
-     */
-    case N
-    /**
-     Overflow flag.
-
-     When performing arithmetic operations,
-     this will indicate whether the result has overflowed.
-     */
-    case V
-    /**
-     Unused flag.
-
-     > Warning: Please do not use this as it's unused flag and needs to be always set to HIGH.
-     */
-    case `_`
-    /**
-     Break flag.
-     */
-    case B
-    case D
-    case I
-    case Z
-    case C
-    // swiftlint:enable identifier_name
-     */
-
-    // Flags Bit Order: NV_BDIZC
-    /**
-     * Negative flag.
-     *
-     * Usually same as bit 7(Negative bit),
-     * but when compare, it indicates whether
-     * the input value is smaller than the register value.
-     */
+enum class Flags(val pos: UByte) {
     N(7u),
 
     /**
@@ -84,7 +43,5 @@ enum class Flags(val pos: UByte) { // how oh nvm got it
     /**
      * Carry flag.
      */
-    C(0u) // now it's time to check how to write a docs
-    // ah alright it's just a copy of JSDoc thanks
+    C(0u)
 }
-// ykwhat lets write docs later lol
