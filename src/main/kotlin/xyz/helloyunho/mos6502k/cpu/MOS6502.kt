@@ -53,9 +53,10 @@ class MOS6502(var memory: MemoryLayout) {
      * @return The changed status.
      */
     fun setFlag(flag: Flags, to: Boolean? = null): UByte {
-        status = (status and (1 shl flag.pos.toInt()).toUByte().inv()) or ((if (to
-                ?: !getFlag(flag)
-        ) 1 else 0) shl flag.pos.toInt()).toUByte()
+        val current = getFlag(flag)
+        if (current != (to ?: current)) {
+            status = status xor (1 shl flag.pos.toInt()).toUByte()
+        }
         return status
     }
 
