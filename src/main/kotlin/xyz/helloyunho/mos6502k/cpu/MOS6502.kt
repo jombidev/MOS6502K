@@ -59,6 +59,45 @@ class MOS6502(var memory: MemoryLayout) {
         return status
     }
 
+    fun getAddress(mode: AddressingMode): UShort {
+        return when (mode) {
+            AddressingMode.immediate -> PC
+            AddressingMode.absolute -> memory.read2Bytes(PC)
+            AddressingMode.zeroPage -> memory[PC].toUShort()
+            AddressingMode.relative -> {
+                val offset = memory[PC].toShort()
+                (PC.toInt() + offset.toInt()).toUShort()
+            }
+            AddressingMode.absoluteIndirect -> memory.read2Bytes(PC)
+            AddressingMode.absoluteIndexedX -> (memory.read2Bytes(PC) + this[Registers.X].toUShort()).toUShort()
+            AddressingMode.absoluteIndexedY -> (memory.read2Bytes(PC) + this[Registers.Y].toUShort()).toUShort()
+            AddressingMode.zeroPageIndexedX -> (memory[PC] + this[Registers.X]).toUShort()
+            AddressingMode.zeroPageIndexedY -> (memory[PC] + this[Registers.Y]).toUShort()
+            AddressingMode.zeroPageIndexedIndirectX -> {
+                val base = memory[PC]
+                val pointer = base + this[Registers.X]
+                memory.read2Bytes(pointer.toUShort())
+            }
+            AddressingMode.zeroPageIndexedIndirectY -> {
+                val base = memory[PC]
+                val pointer = memory.read2Bytes(base.toUShort())
+                (pointer + this[Registers.Y]).toUShort()
+            }
+            else -> error("Register addressing mode detected.")
+        }
+    }
+
+    fun getAddressAndMovePC(mode: AddressingMode): UShort {
+        val data = getAddress(mode)
+        when (mode) {
+            AddressingMode.immediate, AddressingMode.zeroPage, AddressingMode.relative, AddressingMode.zeroPageIndexedX, AddressingMode.zeroPageIndexedY, AddressingMode.zeroPageIndexedIndirectX, AddressingMode.zeroPageIndexedIndirectY -> PC++
+            AddressingMode.absolute, AddressingMode.absoluteIndirect, AddressingMode.absoluteIndexedX, AddressingMode.absoluteIndexedY -> PC = (PC + 2u).toUShort()
+            else -> error("Register addressing mode detected.")
+        }
+
+        return data
+    }
+
 
     operator fun get(register: Registers): UByte {
         return registers[register]!!
