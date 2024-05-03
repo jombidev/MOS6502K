@@ -3,37 +3,51 @@
 
 package xyz.helloyunho.mos6502k.memory
 
-data class BasicMemory(var memory: UByteArray) {
+data class BasicMemory(
+    /**
+     * DO NOT ACCESS THIS DIRECTLY.
+     **/
+    var memory: UByteArray
+) : MemoryLayout {
+    /**
+     * Initializes memory for limited count.
+     *
+     * @param [size] Memory size to initialize.
+     **/
     constructor(size: UShort) : this(UByteArray(size.toInt()))
+
+    /**
+     * Initializes all the available memory (0xFFFF or 65535 bytes).
+     **/
     constructor() : this(0xFFFFu)
 
     val size: Int
         get() = memory.size
 
-    fun read(addr: UShort): UByte {
+    override fun read(addr: UShort): UByte {
         return memory[addr.toInt()]
     }
 
-    fun read2Bytes(addr: UShort): UShort {
+    override fun read2Bytes(addr: UShort): UShort {
         return read(addr).toUShort() or ((read((addr + 1u).toUShort()).toInt()) shl 8).toUShort()
     }
 
-    fun write(addr: UShort, value: UByte): UByte {
+    override fun write(addr: UShort, value: UByte): UByte {
         memory[addr.toInt()] = value
         return value
     }
 
-    fun write(addr: UShort, value: UShort): UShort {
+    override fun write(addr: UShort, value: UShort): UShort {
         write(addr, (value and 0xFFu).toUByte())
         write((addr + 1u).toUShort(), (value.toInt() shr 8).toUByte())
         return value
     }
 
-    operator fun get(addr: UShort): UByte {
+    override operator fun get(addr: UShort): UByte {
         return read(addr)
     }
 
-    operator fun set(addr: UShort, newValue: UByte) {
+    override operator fun set(addr: UShort, newValue: UByte) {
         write(addr, newValue)
     }
 }

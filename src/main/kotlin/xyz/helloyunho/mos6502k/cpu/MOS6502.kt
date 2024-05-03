@@ -46,7 +46,7 @@ class MOS6502(var memory: MemoryLayout) {
      * @return The result of flag in boolean.
      */
     fun getFlag(flag: Flags): Boolean {
-        return status and ((1 shl flag.pos.toInt()).toUByte()) != (0u).toUByte()
+        return status and (1 shl flag.pos.toInt()).toUByte() != 0u.toUByte()
     }
 
     /**
@@ -57,12 +57,14 @@ class MOS6502(var memory: MemoryLayout) {
      * @return The changed status.
      */
     fun setFlag(flag: Flags, to: Boolean? = null): UByte {
-        val current = this[flag]
-        if (current != (to ?: current)) {
+        val current = getFlag(flag)
+        if (current != (to ?: !current)) {
             status = status xor (1 shl flag.pos.toInt()).toUByte()
         }
         return status
     }
+
+    private fun UByte.paddedHexString() = "%8s".format(toString(2)).replace(" ", "0")
 
     /**
      * Gets the address with specified addressing mode.
